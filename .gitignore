@@ -1,0 +1,6 @@
+### JAVA ###
+/target/, *.class, .hidden_settings_de_IDE
+### ANGULAR ###
+/node_modules/, /dist/, /.angular/.
+### PostgreSQL/Env ###
+.env
