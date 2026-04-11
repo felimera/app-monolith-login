@@ -4,11 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-auth-sign-up',
   standalone: true,
   imports: [],
-  template: `
-    <p>
-      auth-sign-up works!
-    </p>
-  `,
+  templateUrl:'./auth-sign-up.component.html',
   styleUrl: './auth-sign-up.component.css'
 })
 export default class AuthSignUpComponent {
