@@ -10,7 +10,11 @@ export default [
     loadComponent: () => import('../auth-log-in/auth-log-in.component')
   },
   {
+    path: 'session',
+    loadComponent: () => import('../auth-session/auth-session.component')
+  },
+  {
     path: '**',
-    redirectTo: 'log-in'
+    redirectTo: 'session'
   }
 ] as Routes;
