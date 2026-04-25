@@ -18,6 +18,12 @@ public class User {
     private Long id;
     @Column(name = "us_username", unique = true, columnDefinition = "TEXT")
     private String username;
+    @Column(name = "us_email", unique = true, columnDefinition = "TEXT")
+    private String email;
+    @Column(name = "us_first_name", unique = true, columnDefinition = "TEXT")
+    private String firstName;
+    @Column(name = "us_last_name", unique = true, columnDefinition = "TEXT")
+    private String lastName;
     @Column(name = "us_password", nullable = false, columnDefinition = "TEXT")
     private String password;
     @ManyToOne(fetch = FetchType.LAZY)

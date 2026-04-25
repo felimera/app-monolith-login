@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // OBLIGATORIO para JWT y APIs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // Sin sesiones de servidor
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/v1/logintoken").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/v1/login/**").permitAll()
                         .requestMatchers("/api/v1/user/**").authenticated()
                         .requestMatchers("/api/v1/rol/**").hasRole("4dm")
                         .requestMatchers("/api/v1/registro", "/api/v1/login", "/css/**", "/js/**").permitAll()
