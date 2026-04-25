@@ -14,9 +14,14 @@ public interface IUserMapper {
 
     @Mapping(target = "idUser", source = "id")
     @Mapping(target = "nombreUsuario", source = "username")
+    @Mapping(target = "nombre", source = "firstName")
+    @Mapping(target = "apellido", source = "lastName")
+    @Mapping(target = "correo", source = "email")
+    @Mapping(target = "idRol", source = "rol.id")
     @Mapping(target = "contrasena", source = "password")
     UserDto toDto(User entity);
 
     @InheritInverseConfiguration
+    @Mapping(target = "password", ignore = true)
     User toEntity(UserDto dto);
 }
