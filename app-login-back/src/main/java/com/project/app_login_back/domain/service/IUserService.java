@@ -1,6 +1,6 @@
 package com.project.app_login_back.domain.service;
 
-import com.project.app_login_back.application.dto.UserDto;
+import com.project.app_login_back.application.dto.entity.UserDto;
 
 import java.util.List;
 

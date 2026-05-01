@@ -36,8 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/v1/login/**").permitAll()
                         .requestMatchers("/api/v1/user/**").authenticated()
-                        .requestMatchers("/api/v1/rol/**").hasRole("4dm")
-                        .requestMatchers("/api/v1/registro", "/api/v1/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/api/v1/rol/**","/api/v1/user/in").hasRole("4dm")
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

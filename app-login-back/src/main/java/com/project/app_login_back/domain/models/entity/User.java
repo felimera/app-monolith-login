@@ -26,6 +26,10 @@ public class User {
     private String lastName;
     @Column(name = "us_password", nullable = false, columnDefinition = "TEXT")
     private String password;
+    @Column(name = "us_phone_1", length = 20)
+    private String phoneOne;
+    @Column(name = "us_phone_2", length = 20)
+    private String phoneTwo;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "us_ro_id")
     private Rol rol;

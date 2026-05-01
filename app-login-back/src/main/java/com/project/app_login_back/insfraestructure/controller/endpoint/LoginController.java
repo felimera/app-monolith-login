@@ -1,9 +1,11 @@
 package com.project.app_login_back.insfraestructure.controller.endpoint;
 
-import com.project.app_login_back.application.dto.LoginRequest;
-import com.project.app_login_back.application.dto.LoginResponse;
+import com.project.app_login_back.application.dto.auth.LoginRequest;
+import com.project.app_login_back.application.dto.auth.LoginResponse;
+import com.project.app_login_back.application.dto.auth.TokenRequest;
 import com.project.app_login_back.application.service.jwt.JwtService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,13 +30,13 @@ public class LoginController {
     }
 
     @PostMapping(path = "/token")
-    public ResponseEntity<Object> loginApi(@RequestBody LoginRequest login) {
-        String token = jwtService.crearToken(login.getUsername());
+    public ResponseEntity<Object> loginApi(@Valid @RequestBody TokenRequest tokenRequest) {
+        String token = jwtService.crearToken(tokenRequest.getUsername());
         return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PostMapping(path = "/in")
-    public ResponseEntity<Object> login(@RequestBody LoginRequest login) {
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest login) {
         LoginResponse loginResponse = jwtService.login(login);
         // Ejemplo rápido en el Controller
         if (Objects.isNull(loginResponse)) {

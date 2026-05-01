@@ -1,6 +1,6 @@
 package com.project.app_login_back.application.mapper;
 
-import com.project.app_login_back.application.dto.UserDto;
+import com.project.app_login_back.application.dto.entity.UserDto;
 import com.project.app_login_back.domain.models.entity.User;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -17,11 +17,13 @@ public interface IUserMapper {
     @Mapping(target = "nombre", source = "firstName")
     @Mapping(target = "apellido", source = "lastName")
     @Mapping(target = "correo", source = "email")
+    @Mapping(target = "telefonoUno", source = "phoneOne")
+    @Mapping(target = "telefonoDos", source = "phoneTwo")
     @Mapping(target = "idRol", source = "rol.id")
-    @Mapping(target = "contrasena", source = "password")
+    @Mapping(target = "contrasena", ignore = true)
     UserDto toDto(User entity);
 
     @InheritInverseConfiguration
-    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "password", source = "contrasena")
     User toEntity(UserDto dto);
 }

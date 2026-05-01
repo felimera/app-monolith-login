@@ -1,4 +1,4 @@
-package com.project.app_login_back.application.dto;
+package com.project.app_login_back.application.dto.auth;
 
 import lombok.Data;
 
