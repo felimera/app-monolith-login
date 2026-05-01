@@ -7,8 +7,9 @@ import com.project.app_login_back.application.dto.auth.LoginRequest;
 import com.project.app_login_back.application.dto.auth.LoginResponse;
 import com.project.app_login_back.domain.models.entity.User;
 import com.project.app_login_back.domain.repository.IUserRepository;
-import com.project.app_login_back.insfraestructure.util.Constants;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -18,20 +19,32 @@ import java.util.Optional;
 public class JwtService {
 
     private IUserRepository iUserRepository;
+    private Algorithm algorithm;
+
+    @Value("${project.jwt.secret}")
+    private String keyToken;
+    @Value("${project.jwt.expiration}")
+    private Long expirationTime;
 
     @Autowired
     public JwtService(IUserRepository iUserRepository) {
         this.iUserRepository = iUserRepository;
     }
 
-    private final Algorithm algorithm = Algorithm.HMAC256(Constants.KEY_TOKEN);
+    @PostConstruct
+    public void init() {
+        if (keyToken == null || keyToken.isEmpty()) {
+            throw new IllegalArgumentException("La clave JWT no se cargó correctamente");
+        }
+        this.algorithm = Algorithm.HMAC256(keyToken);
+    }
 
     public String crearToken(String username) {
         if (iUserRepository.findByUsername(username).isPresent())
             return JWT.create()
                     .withSubject(username)
                     .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 3600000)) // 1 hora de validez
+                    .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime)) // 1 hora de validez
                     .sign(algorithm);
         else return "";
     }

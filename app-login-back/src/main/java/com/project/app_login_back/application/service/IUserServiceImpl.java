@@ -32,15 +32,18 @@ public class IUserServiceImpl implements IUserService {
 
     @Override
     public List<UserDto> getAll() {
-        String rol = AuthUtil
-                .getUsernameAndRol()
+        String rol = AuthUtil.getUsernameAndRol()
                 .values()
                 .stream().
                 findFirst()
                 .orElseThrow(() -> new IllegalStateException("The authenticated user has no assigned roles."));
         switch (rol) {
             case Constants.CODE_ROL_CLIENT:
-                return iUserRepository.getUsersWithRoleClient(rol)
+                String username = AuthUtil.getUsernameAndRol()
+                        .keySet().stream()
+                        .findFirst()
+                        .orElse("No information was found.");
+                return iUserRepository.getUsersWithRoleClient(rol, username)
                         .stream().map(entity -> {
                             UserDto userDto = IUserMapper.INSTANCE.toDto(entity);
                             userDto.setIdRol(entity.getRol().getId());
