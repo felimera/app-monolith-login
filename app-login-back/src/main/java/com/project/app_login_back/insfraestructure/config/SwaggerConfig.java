@@ -49,7 +49,8 @@ public class SwaggerConfig {
                 .group("2-Informacion-Plataforma")
                 .pathsToMatch(
                         "/api/v1/login/token", // Revisa si este debe estar aquí o solo en public
-                        "/api/v1/login/in"
+                        "/api/v1/login/in",
+                        "/api/v1/signup/in"
                 )
                 // AGREGAMOS la exigencia del token solo para este grupo
                 .addOpenApiCustomizer(openApi -> openApi.addSecurityItem(
