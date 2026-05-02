@@ -6,11 +6,31 @@
 
   <form class="max-w-md mx-auto" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div>
-      <label for="email" class="block mb-2 text-sm font-medium text-slate-300 dark:text-white">Usuario</label>
-      <input type="email" name="email" id="email"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="name@company.com" required formControlName="email" />
+      <label for="identifier" class="block mb-2 text-sm font-medium text-slate-300 dark:text-white">
+        Usuario o Correo electrónico
+      </label>
+
+      <input type="text" id="identifier" formControlName="identifier"
+        class="bg-gray-50 border text-sm rounded-lg block w-full p-2.5"
+        [class.border-red-500]="form.get('identifier')?.invalid && form.get('identifier')?.touched"
+        [class.focus:ring-red-500]="form.get('identifier')?.invalid && form.get('identifier')?.touched"
+        [class.border-gray-300]="!(form.get('identifier')?.invalid && form.get('identifier')?.touched)"
+        placeholder="nombre_usuario o correo@empresa.com" />
+
+      <!-- Nueva sintaxis @if de Angular 17 -->
+      @if (form.get('identifier')?.touched && form.get('identifier')?.invalid) {
+      <div class="mt-1 flex flex-col">
+        @if (form.get('identifier')?.hasError('required')) {
+        <small class="text-red-500">Este campo es obligatorio.</small>
+        }
+        @if (form.get('identifier')?.hasError('email')) {
+        <small class="text-red-500">El formato de correo no es válido.</small>
+        }
+      </div>
+      }
     </div>
+
+
     <div>
       <label for="password" class="block mb-2 text-sm font-medium text-slate-300   dark:text-white">Constraseña</label>
       <input type="password" name="password" id="password" placeholder="••••••••"
