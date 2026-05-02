@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -39,10 +40,20 @@ public class JwtService {
         this.algorithm = Algorithm.HMAC256(keyToken);
     }
 
-    public String crearToken(String username) {
+    public String crearTokenUsername(String username) {
         if (iUserRepository.findByUsername(username).isPresent())
             return JWT.create()
                     .withSubject(username)
+                    .withIssuedAt(new Date())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime)) // 1 hora de validez
+                    .sign(algorithm);
+        else return "";
+    }
+
+    public String crearTokenEmail(String email) {
+        if (iUserRepository.findByEmail(email).isPresent())
+            return JWT.create()
+                    .withSubject(email)
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime)) // 1 hora de validez
                     .sign(algorithm);
@@ -63,16 +74,26 @@ public class JwtService {
     public LoginResponse login(LoginRequest loginRequest) {
         Optional<User> userOptional = iUserRepository.findByEmail(loginRequest.getEmail());
         if (userOptional.isPresent()) {
-            String token = crearToken(loginRequest.getUsername());
+            String token = this.getSecurityToken(loginRequest);
+            if (Objects.isNull(token))
+                return null;
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setToken(token);
-            loginResponse.setType("Bearer");
+            loginResponse.setTokenType("Bearer");
             loginResponse.setEmail(userOptional.get().getEmail());
             loginResponse.setUsername(userOptional.get().getUsername());
             loginResponse.setFullName(userOptional.get().getFirstName().concat(" ").concat(userOptional.get().getLastName()));
             loginResponse.setRoles(userOptional.get().getRol().getName());
             return loginResponse;
         }
+        return null;
+    }
+
+    private String getSecurityToken(LoginRequest request) {
+        if (Objects.nonNull(request.getUsername()))
+            return crearTokenUsername(request.getUsername());
+        else if (Objects.nonNull(request.getEmail()))
+            return crearTokenEmail(request.getEmail());
         return null;
     }
 }

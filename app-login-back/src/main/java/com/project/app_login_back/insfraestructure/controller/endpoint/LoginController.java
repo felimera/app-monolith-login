@@ -31,7 +31,7 @@ public class LoginController {
 
     @PostMapping(path = "/token")
     public ResponseEntity<Object> loginApi(@Valid @RequestBody TokenRequest tokenRequest) {
-        String token = jwtService.crearToken(tokenRequest.getUsername());
+        String token = jwtService.crearTokenUsername(tokenRequest.getUsername());
         return ResponseEntity.ok(Map.of("token", token));
     }
 
@@ -41,7 +41,7 @@ public class LoginController {
         // Ejemplo rápido en el Controller
         if (Objects.isNull(loginResponse)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Usuario o contraseña incorrectos");
+                    .body("Incorrect username or password.");
         } else {
             return ResponseEntity.ok(loginResponse);
         }

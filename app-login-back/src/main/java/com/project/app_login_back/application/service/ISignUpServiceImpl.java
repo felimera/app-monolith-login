@@ -27,7 +27,7 @@ public class ISignUpServiceImpl implements ISignUpService {
     public SignUpResponse postSignup(SignUpRequest signUpRequest) {
         UserDto userNew = buildUserDtoObject(signUpRequest);
         UserDto dto = iUserService.postUser(userNew);
-        String token = jwtService.crearToken(signUpRequest.getNombreUsuario());
+        String token = jwtService.crearTokenUsername(signUpRequest.getNombreUsuario());
         SignUpResponse signUpResponse = new SignUpResponse();
         signUpResponse.setUser(dto);
         signUpResponse.setToken(token);
