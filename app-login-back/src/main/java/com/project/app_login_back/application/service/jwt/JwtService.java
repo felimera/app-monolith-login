@@ -6,20 +6,25 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.project.app_login_back.application.dto.auth.LoginRequest;
 import com.project.app_login_back.application.dto.auth.LoginResponse;
 import com.project.app_login_back.domain.models.entity.User;
+import com.project.app_login_back.domain.repository.IUserCriteriaRepository;
 import com.project.app_login_back.domain.repository.IUserRepository;
+import com.project.app_login_back.insfraestructure.util.CadenaUtil;
+import com.project.app_login_back.insfraestructure.util.Constants;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class JwtService {
-
     private IUserRepository iUserRepository;
+    private IUserCriteriaRepository iUserCriteriaRepository;
     private Algorithm algorithm;
 
     @Value("${project.jwt.secret}")
@@ -28,8 +33,9 @@ public class JwtService {
     private Long expirationTime;
 
     @Autowired
-    public JwtService(IUserRepository iUserRepository) {
+    public JwtService(IUserRepository iUserRepository, IUserCriteriaRepository iUserCriteriaRepository) {
         this.iUserRepository = iUserRepository;
+        this.iUserCriteriaRepository = iUserCriteriaRepository;
     }
 
     @PostConstruct
@@ -72,28 +78,34 @@ public class JwtService {
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
-        Optional<User> userOptional = iUserRepository.findByEmail(loginRequest.getEmail());
-        if (userOptional.isPresent()) {
-            String token = this.getSecurityToken(loginRequest);
-            if (Objects.isNull(token))
-                return null;
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setToken(token);
-            loginResponse.setTokenType("Bearer");
-            loginResponse.setEmail(userOptional.get().getEmail());
-            loginResponse.setUsername(userOptional.get().getUsername());
-            loginResponse.setFullName(userOptional.get().getFirstName().concat(" ").concat(userOptional.get().getLastName()));
-            loginResponse.setRoles(userOptional.get().getRol().getName());
-            return loginResponse;
-        }
-        return null;
+        String key = CadenaUtil.getIdentifyEmailOrUsername(loginRequest.getIdentifier());
+        Map<String, String> map = new HashMap<>();
+        map.put(key, loginRequest.getIdentifier());
+        map.put("pass", loginRequest.getPassword());
+
+        User user = iUserCriteriaRepository.getConsultUserDifferentCriteria(map)
+                .orElseThrow(() -> new BadCredentialsException("Usuario o contraseña incorrectos"));
+
+        String token = this.getSecurityToken(loginRequest);
+        if (Objects.isNull(token))
+            return null;
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(token);
+        loginResponse.setTokenType("Bearer");
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setUsername(user.getUsername());
+        loginResponse.setFullName(user.getFirstName().concat(" ").concat(user.getLastName()));
+        loginResponse.setRoles(user.getRol().getName());
+        return loginResponse;
     }
 
+
     private String getSecurityToken(LoginRequest request) {
-        if (Objects.nonNull(request.getUsername()))
-            return crearTokenUsername(request.getUsername());
-        else if (Objects.nonNull(request.getEmail()))
-            return crearTokenEmail(request.getEmail());
+        String key = CadenaUtil.getIdentifyEmailOrUsername(request.getIdentifier());
+        if (Constants.U.equals(key))
+            return crearTokenUsername(request.getIdentifier());
+        else if (Constants.E.equals(key))
+            return crearTokenEmail(request.getIdentifier());
         return null;
     }
 }

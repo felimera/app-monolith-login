@@ -8,4 +8,7 @@ public class Constants {
     public static final String CODE_ROL_ADMIN = "ADMIN";
     public static final String CODE_ROL_DIRECT = "DIRECT";
     public static final String CODE_ROL_CLIENT = "CLIENT";
+
+    public static final String E = "E";
+    public static final String U = "U";
 }

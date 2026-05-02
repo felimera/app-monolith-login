@@ -84,6 +84,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        // Es vital loguear el error real en la consola de IntelliJ para que tú sepas qué pasó
+        log.error("Error de tiempo de ejecución: ", ex);
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), // O INTERNAL_SERVER_ERROR (500) según prefieras
+                ex.getMessage(), // Aquí viajará el mensaje "Se encontró más de un usuario..."
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     // Error genérico para cualquier otra falla (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralError(Exception ex) {

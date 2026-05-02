@@ -4,6 +4,7 @@ import com.project.app_login_back.application.dto.auth.LoginRequest;
 import com.project.app_login_back.application.dto.auth.LoginResponse;
 import com.project.app_login_back.application.dto.auth.TokenRequest;
 import com.project.app_login_back.application.service.jwt.JwtService;
+import com.project.app_login_back.domain.service.IAuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,12 @@ import java.util.Objects;
 public class LoginController {
 
     private JwtService jwtService;
+    private IAuthService iAuthService;
 
     @Autowired
-    public LoginController(JwtService jwtService) {
+    public LoginController(JwtService jwtService, IAuthService iAuthService) {
         this.jwtService = jwtService;
+        this.iAuthService = iAuthService;
     }
 
     @PostMapping(path = "/token")
@@ -37,14 +40,17 @@ public class LoginController {
 
     @PostMapping(path = "/in")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest login) {
-        LoginResponse loginResponse = jwtService.login(login);
-        // Ejemplo rápido en el Controller
-        if (Objects.isNull(loginResponse)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Incorrect username or password.");
-        } else {
-            return ResponseEntity.ok(loginResponse);
-        }
-
+        boolean isVerificado = iAuthService.getUserPassword(login);
+        if (isVerificado) {
+            LoginResponse loginResponse = jwtService.login(login);
+            // Ejemplo rápido en el Controller
+            if (Objects.isNull(loginResponse)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Incorrect username or password"));
+            } else {
+                return ResponseEntity.ok(loginResponse);
+            }
+        } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Incorrect username or password"));
     }
 }
