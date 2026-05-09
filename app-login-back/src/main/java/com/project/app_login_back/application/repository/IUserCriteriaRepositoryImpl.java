@@ -1,4 +1,4 @@
-package com.project.app_login_back.application;
+package com.project.app_login_back.application.repository;
 
 import com.project.app_login_back.domain.models.entity.User;
 import com.project.app_login_back.domain.models.entity.User_;
