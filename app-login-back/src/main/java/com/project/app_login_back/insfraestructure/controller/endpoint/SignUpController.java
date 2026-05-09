@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Tag(name = "Sign up", description = "Sign up operations.")
@@ -48,11 +49,11 @@ public class SignUpController {
         if (Objects.isNull(response.getUser().getCorreo())) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Email already exists.");
+                    .body(Map.of("message", "Email already exists."));
         } else if (Objects.isNull(response.getUser().getNombreUsuario())) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("The username already exists.");
+                    .body(Map.of("message", "The username already exists."));
         } else {
             response.setTokenType("Bearer");
             response.setMessage("User successfully registered.");

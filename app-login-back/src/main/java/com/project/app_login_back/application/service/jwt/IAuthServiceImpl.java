@@ -4,7 +4,7 @@ import com.project.app_login_back.application.dto.auth.LoginRequest;
 import com.project.app_login_back.domain.models.entity.User;
 import com.project.app_login_back.domain.repository.IUserCriteriaRepository;
 import com.project.app_login_back.domain.service.IAuthService;
-import com.project.app_login_back.insfraestructure.util.CadenaUtil;
+import com.project.app_login_back.insfraestructure.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +27,7 @@ public class IAuthServiceImpl implements IAuthService {
     @Override
     public boolean getUserPassword(LoginRequest loginRequest) {
 
-        String key = CadenaUtil.getIdentifyEmailOrUsername(loginRequest.getIdentifier());
+        String key = ValidationUtil.getIdentifyEmailOrUsername(loginRequest.getIdentifier());
         Map<String, String> map = new HashMap<>();
         map.put(key, loginRequest.getIdentifier());
         map.put("pass", loginRequest.getPassword());

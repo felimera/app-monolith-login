@@ -8,7 +8,7 @@ import com.project.app_login_back.application.dto.auth.LoginResponse;
 import com.project.app_login_back.domain.models.entity.User;
 import com.project.app_login_back.domain.repository.IUserCriteriaRepository;
 import com.project.app_login_back.domain.repository.IUserRepository;
-import com.project.app_login_back.insfraestructure.util.CadenaUtil;
+import com.project.app_login_back.insfraestructure.util.ValidationUtil;
 import com.project.app_login_back.insfraestructure.util.Constants;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +78,7 @@ public class JwtService {
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
-        String key = CadenaUtil.getIdentifyEmailOrUsername(loginRequest.getIdentifier());
+        String key = ValidationUtil.getIdentifyEmailOrUsername(loginRequest.getIdentifier());
         Map<String, String> map = new HashMap<>();
         map.put(key, loginRequest.getIdentifier());
         map.put("pass", loginRequest.getPassword());
@@ -101,7 +101,7 @@ public class JwtService {
 
 
     private String getSecurityToken(LoginRequest request) {
-        String key = CadenaUtil.getIdentifyEmailOrUsername(request.getIdentifier());
+        String key = ValidationUtil.getIdentifyEmailOrUsername(request.getIdentifier());
         if (Constants.U.equals(key))
             return crearTokenUsername(request.getIdentifier());
         else if (Constants.E.equals(key))

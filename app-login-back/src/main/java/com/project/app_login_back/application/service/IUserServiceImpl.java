@@ -7,8 +7,10 @@ import com.project.app_login_back.domain.models.entity.User;
 import com.project.app_login_back.domain.repository.IUserRepository;
 import com.project.app_login_back.domain.service.IRolService;
 import com.project.app_login_back.domain.service.IUserService;
+import com.project.app_login_back.insfraestructure.exception.InvalidDataException;
 import com.project.app_login_back.insfraestructure.util.AuthUtil;
 import com.project.app_login_back.insfraestructure.util.Constants;
+import com.project.app_login_back.insfraestructure.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,6 +73,8 @@ public class IUserServiceImpl implements IUserService {
         if (iUserRepository.isValidateExistingEmail(userDto.getCorreo())) {
             userDto.setCorreo(null);
             return userDto;
+        } else if (!ValidationUtil.isEmailValid(userDto.getCorreo())) {
+            throw new InvalidDataException("The email format is invalid.");
         } else if (iUserRepository.isValidateExistingUsername(userDto.getNombreUsuario())) {
             userDto.setNombreUsuario(null);
             return userDto;

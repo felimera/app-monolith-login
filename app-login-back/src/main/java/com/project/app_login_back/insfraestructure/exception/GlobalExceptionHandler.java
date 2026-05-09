@@ -98,6 +98,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidData(InvalidDataException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Dato Inválido");
+        response.put("message", ex.getMessage()); // Aquí irá "El email no es válido"
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     // Error genérico para cualquier otra falla (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralError(Exception ex) {
