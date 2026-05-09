@@ -40,7 +40,6 @@ public class ISignUpServiceImpl implements ISignUpService {
         userNew.setCorreo(signUpRequest.getCorreo());
         userNew.setNombre(signUpRequest.getNombre());
         userNew.setApellido(signUpRequest.getApellido());
-        userNew.setIdRol(signUpRequest.getIdRol());
         userNew.setContrasena(signUpRequest.getContrasena());
         if (Objects.nonNull(signUpRequest.getTelefonoUno()))
             userNew.setTelefonoUno(signUpRequest.getTelefonoUno());

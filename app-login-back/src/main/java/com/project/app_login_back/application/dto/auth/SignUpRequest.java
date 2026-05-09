@@ -26,5 +26,4 @@ public class SignUpRequest {
     private String correo;
     private String telefonoUno;
     private String telefonoDos;
-    private Long idRol;
 }
