@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../data-access/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoginResponse } from '../../interface/login.interface';
 
 interface LoginForm {
   identifier: FormControl<null | string>;
@@ -15,18 +16,17 @@ interface LoginForm {
   templateUrl: './auth-log-in.component.html',
   styleUrl: './auth-log-in.component.css'
 })
-export default class AuthLogInComponent implements OnInit { // Añade OnInit
+export default class AuthLogInComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
 
-  // Cambiamos 'email' por 'identifier' para que acepte ambos
   public form: FormGroup = this._formBuilder.group({
     identifier: [null, [Validators.required]],
     password: [null, [Validators.required]],
   });
 
   ngOnInit(): void {
-    // Lógica para validar email solo si detecta un "@"
+
     this.form.get('identifier')?.valueChanges.subscribe(value => {
       const control = this.form.get('identifier');
       if (!value) return;
@@ -49,7 +49,7 @@ export default class AuthLogInComponent implements OnInit { // Añade OnInit
 
     // Enviamos el formulario al servicio
     this._authService.login(this.form.value).subscribe({
-      next: (response) => {
+      next: (response:LoginResponse) => {
         console.log('¡Bienvenido!', response);
         // Aquí guardarías el token (localStorage.setItem('token', response.token))
       },
