@@ -1,4 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+/* 1. LOS IMPORTS SIEMPRE PRIMERO */
+@import 'ngx-toastr/toastr';
+
+/* 2. Directivas de Tailwind (si las usas) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 3. El resto de tus estilos manuales */
+*, ::before, ::after {
+}

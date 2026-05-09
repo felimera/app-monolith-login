@@ -1,11 +1,11 @@
 export interface UserDto {
   idUser: number;
-  nombreUsuario: String;
-  contrasena: String;
-  nombre: String;
-  apellido: String;
-  correo: String;
-  telefonoUno: String;
-  telefonoDos: String;
+  nombreUsuario: string;
+  contrasena: string;
+  nombre: string;
+  apellido: string;
+  correo: string;
+  telefonoUno: string;
+  telefonoDos: string;
   idRol: number;
 }

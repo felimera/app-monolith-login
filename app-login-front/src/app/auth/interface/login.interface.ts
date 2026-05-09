@@ -1,8 +1,8 @@
 export interface LoginResponse {
-  token: String;
-  tokenType: String;
-  username: String;
-  email: String;
-  fullName: String;
-  roles: String;
+  token: string;
+  tokenType: string;
+  username: string;
+  email: string;
+  fullName: string;
+  roles: string;
 }
