@@ -47,7 +47,20 @@
         placeholder=" " required formControlName="contrasena" />
       <label for="floating_password"
         class="peer-focus:font-medium absolute text-sm text-slate-300 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
+
+      <!-- ALERTA DE TAMAÑO PARA LA PRIMERA CONTRASEÑA -->
+      @if (form.get('contrasena')?.invalid && (form.get('contrasena')?.dirty || form.get('contrasena')?.touched)) {
+      <div class="mt-2 text-xs text-red-500 font-medium">
+        @if (form.get('contrasena')?.hasError('required')) {
+        <span>La contraseña es obligatoria.</span>
+        }
+        @if (form.get('contrasena')?.hasError('minlength')) {
+        <span>La contraseña debe tener al menos 6 caracteres.</span>
+        }
+      </div>
+      }
     </div>
+
     <div class="relative z-0 w-full mb-5 group">
       <input type="password" name="repeat_password" id="floating_repeat_password"
         class="block py-2.5 px-0 w-full text-sm text-slate-300 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -56,14 +69,20 @@
         class="peer-focus:font-medium absolute text-sm text-slate-300 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
         Confirm password</label>
 
-      <!-- MENSAJE DE ERROR -->
-      <div
-        *ngIf="form.get('contrasenaDos')?.invalid && (form.get('contrasenaDos')?.dirty || form.get('contrasenaDos')?.touched)"
-        class="mt-2 text-xs text-red-500 font-medium">
-        <span *ngIf="form.get('contrasenaDos')?.hasError('required')">La confirmación es obligatoria.</span>
-        <span *ngIf="form.get('contrasenaDos')?.hasError('noCoinciden')">Las contraseñas no coinciden.</span>
+      <!-- ALERTA DE COINCIDENCIA CON EL NUEVO @if -->
+      @if (form.get('contrasenaDos')?.invalid && (form.get('contrasenaDos')?.dirty ||
+      form.get('contrasenaDos')?.touched)) {
+      <div class="mt-2 text-xs text-red-500 font-medium">
+        @if (form.get('contrasenaDos')?.hasError('required')) {
+        <span>La confirmación es obligatoria.</span>
+        }
+        @if (form.get('contrasenaDos')?.hasError('noCoinciden')) {
+        <span>Las contraseñas no coinciden.</span>
+        }
       </div>
+      }
     </div>
+
 
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 w-full mb-5 group">
