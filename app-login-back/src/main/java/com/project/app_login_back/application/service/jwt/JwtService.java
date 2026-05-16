@@ -96,6 +96,7 @@ public class JwtService {
         loginResponse.setUsername(user.getUsername());
         loginResponse.setFullName(user.getFirstName().concat(" ").concat(user.getLastName()));
         loginResponse.setRoles(user.getRol().getName());
+        loginResponse.setCodeRole(user.getRol().getCode());
         return loginResponse;
     }
 

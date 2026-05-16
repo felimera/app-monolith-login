@@ -8,10 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -29,7 +26,10 @@ public class IUserCriteriaRepositoryImpl implements IUserCriteriaRepository {
     public Optional<User> getConsultUserDifferentCriteria(Map<String, String> criterios) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> user = cq.from(User.class);
+        Root<User> userRoot = cq.from(User.class);
+
+        userRoot.join(User_.ROL, JoinType.INNER);
+        userRoot.fetch(User_.ROL, JoinType.INNER);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -39,9 +39,9 @@ public class IUserCriteriaRepositoryImpl implements IUserCriteriaRepository {
                 .orElse(null);
 
         if (Constants.E.equals(key))
-            predicates.add(cb.equal(user.get(User_.email), criterios.get(key)));
+            predicates.add(cb.equal(userRoot.get(User_.email), criterios.get(key)));
         if (Constants.U.equals(key))
-            predicates.add(cb.equal(user.get(User_.username), criterios.get(key)));
+            predicates.add(cb.equal(userRoot.get(User_.username), criterios.get(key)));
 
 
         if (predicates.isEmpty()) return Optional.empty();

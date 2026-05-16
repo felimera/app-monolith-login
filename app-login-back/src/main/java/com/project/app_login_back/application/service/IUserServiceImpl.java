@@ -91,7 +91,7 @@ public class IUserServiceImpl implements IUserService {
     public UserDto putUserRol(Long id) {
         Optional<User> userOldOptional = iUserRepository.findById(id);
         if (userOldOptional.isPresent()) {
-            Rol rol = iRolService.getTypeRol(Constants.CODE_ROL_ADMIN);
+            Rol rol = iRolService.getTypeRol(Constants.CODE_ROL_DIRECT);
             userOldOptional.get().setRol(rol);
             User userNew = iUserRepository.save(userOldOptional.get());
             UserDto userDto = IUserMapper.INSTANCE.toDto(userNew);
