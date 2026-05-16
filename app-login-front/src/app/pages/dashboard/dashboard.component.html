@@ -1,0 +1,86 @@
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+
+  <!-- BOTÓN MOVIL -->
+  <button (click)="toggleMenu()"
+    class="md:hidden absolute top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-lg shadow-md">
+    <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  </button>
+
+  <!-- MENÚ VERTICAL -->
+  <aside [class.translate-x-0]="isMenuOpen" [class.-translate-x-full]="!isMenuOpen"
+    class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-800 text-slate-300 flex flex-col justify-between transition-transform duration-300 md:relative md:translate-x-0 border-r border-slate-700">
+
+    <div class="px-4 py-6">
+      <div class="flex items-center gap-2 px-2 mb-8">
+        <span class="text-xl font-black text-white tracking-wider uppercase">Panel Control</span>
+      </div>
+
+      <nav class="space-y-2">
+        <!-- ÍTEM 1: CUSTOMER (CLIENT, DIRECT, ADMIN) -->
+        @if (userCodeRole === 'CLIENT' || userCodeRole === 'DIRECT' || userCodeRole === 'ADMIN') {
+        <a routerLink="customer" routerLinkActive="bg-blue-600 text-white" (click)="isMenuOpen = false"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
+          <span>Customer</span>
+        </a>
+        }
+
+        <!-- ÍTEM 2: REPORT (DIRECT, ADMIN) -->
+        @if (userCodeRole === 'DIRECT' || userCodeRole === 'ADMIN') {
+        <a routerLink="report" routerLinkActive="bg-blue-600 text-white" (click)="isMenuOpen = false"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
+          <span>Report</span>
+        </a>
+        }
+
+        <!-- ÍTEM 3: SETTINGS (SOLO ADMIN) -->
+        @if (userCodeRole === 'ADMIN') {
+        <a routerLink="settings" routerLinkActive="bg-blue-600 text-white" (click)="isMenuOpen = false"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
+          <span>Settings</span>
+        </a>
+        }
+
+        <!-- LÍNEA DIVISORA ELEGANTE -->
+        <hr class="border-slate-700 my-4" />
+
+        <!-- BOTÓN OPCIONES -->
+        <button
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 hover:text-white transition-colors text-left">
+          <span>Opciones</span>
+        </button>
+
+        <!-- BOTÓN CERRAR SESIÓN -->
+        <button (click)="cerrarSesion()"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-600 hover:text-white transition-all text-left mt-2">
+          <span>Cerrar sesión</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- PARTE INFERIOR: PERFIL DE USUARIO -->
+    <div class="p-4 bg-slate-800/50 border-t border-slate-700 flex items-center gap-3">
+      <!-- LOGO DE USER -->
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-sm">
+        {{ usuarioNombre.charAt(0).toUpperCase() }}
+      </div>
+      <div class="overflow-hidden">
+        <h4 class="text-sm font-semibold text-white truncate">{{ usuarioNombre }}</h4>
+        <p class="text-xs text-slate-400 truncate">{{ usuarioRol }}</p>
+      </div>
+    </div>
+
+  </aside>
+
+  @if (isMenuOpen) {
+  <div (click)="toggleMenu()" class="fixed inset-0 z-30 bg-black/50 md:hidden"></div>
+  }
+
+  <!-- ÁREA DE CONTENIDO -->
+  <main class="flex-1 overflow-y-auto p-8 pt-16 md:pt-8">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>
