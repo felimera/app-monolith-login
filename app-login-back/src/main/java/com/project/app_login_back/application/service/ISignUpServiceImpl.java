@@ -41,9 +41,9 @@ public class ISignUpServiceImpl implements ISignUpService {
         userNew.setNombre(signUpRequest.getNombre());
         userNew.setApellido(signUpRequest.getApellido());
         userNew.setContrasena(signUpRequest.getContrasena());
-        if (Objects.nonNull(signUpRequest.getTelefonoUno()))
+        if (Objects.nonNull(signUpRequest.getTelefonoUno()) && (!signUpRequest.getTelefonoUno().isEmpty()))
             userNew.setTelefonoUno(signUpRequest.getTelefonoUno());
-        if (Objects.nonNull(signUpRequest.getTelefonoDos()))
+        if (Objects.nonNull(signUpRequest.getTelefonoDos()) && (!signUpRequest.getTelefonoDos().isEmpty()))
             userNew.setTelefonoDos(signUpRequest.getTelefonoDos());
         return userNew;
     }
