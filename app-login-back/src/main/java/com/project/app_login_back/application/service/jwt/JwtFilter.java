@@ -54,11 +54,23 @@ public class JwtFilter extends OncePerRequestFilter {
                     log.info("DEBUG: El username es NULL o ya está autenticado.");
                 }
             } catch (Exception e) {
-                log.error("DEBUG: ERROR EN EL FILTRO: ", e.getMessage(),e);
+                log.error("DEBUG: ERROR EN EL FILTRO: ", e.getMessage(), e);
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        // 🚀 Si la ruta es la raíz, el index, o un archivo estático (.js, .css), no aplicar el filtro de token
+        return path.equals("/") ||
+                path.equals("/index.html") ||
+                path.endsWith(".js") ||
+                path.endsWith(".css") ||
+                path.endsWith(".ico") ||
+                path.startsWith("/api/v1/login/");
     }
 }
 
