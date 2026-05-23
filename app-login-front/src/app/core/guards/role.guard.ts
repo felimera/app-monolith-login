@@ -21,14 +21,17 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     }
 
     try {
-      const customer:UserResponse = JSON.parse(rawCustomer);
-
+      const customer = JSON.parse(rawCustomer);
+      let userRole = '';
       // COLOQUEMOS ESTOS LOGS TEMPORALES PARA DEBUGEAR
       // console.log('[Guard] Objeto recuperado:', customer);
       // console.log('[Guard] codeRole detectado:', customer.user.codeRole);
       // console.log('[Guard] Roles permitidos para esta pantalla:', allowedRoles);
 
-      const userRole = customer.user.codeRole;
+      if (customer.user)
+        userRole = customer.user.codeRole;
+      else
+        userRole = customer.codeRole;
 
       // Forzamos a que compare en mayúsculas por seguridad
       if (userRole && allowedRoles.includes(userRole.toUpperCase())) {
