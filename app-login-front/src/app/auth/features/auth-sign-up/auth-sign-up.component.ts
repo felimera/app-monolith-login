@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../data-access/auth.service';
@@ -6,6 +6,8 @@ import { UserResponse } from '../../interface/signup-response.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { coincidenContrasenas } from '../../../shared/validators/password-match.validator';
+import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 interface SignupForm {
   nombreUsuario: FormControl<null | string>;
@@ -32,6 +34,8 @@ export default class AuthSignUpComponent {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
   private _toastr = inject(ToastrService);
+  private _router = inject(Router);
+  private _platformId = inject(PLATFORM_ID);
 
   public form: FormGroup = this._formBuilder.group({
     nombreUsuario: ['', [Validators.required]],
@@ -69,10 +73,24 @@ export default class AuthSignUpComponent {
     this._authService.signUp(this.form.value)
       .subscribe({
         next: (response: UserResponse) => {
-          console.log('¡Bienvenido!', response);
-          localStorage.setItem('token', `${response.tokenType} ${response.token}`);
-          localStorage.setItem('current_customer', JSON.stringify(response.user));
-          this._toastr.success(`¡Bienvenido de nuevo, ${response.user.nombre} ${response.user.apellido}!`, 'Creación de usuario exitosa.');
+          // VALIDACIÓN CRÍTICA: Solo operar si estamos del lado del cliente
+          if (isPlatformBrowser(this._platformId)) {
+
+            // 1. Almacenar los datos de forma segura
+            localStorage.setItem('token', `${response.tokenType} ${response.token}`);
+            localStorage.setItem('current_customer', JSON.stringify(response));
+
+            // 2. Mostrar la alerta visual
+            this._toastr.success(`¡Bienvenido de nuevo, ${response.user.nombre}!`, 'Inicio de sesión exitoso.');
+
+            // 3. Ejecutar la redirección absoluta con barra inclinada
+            this._router.navigate(['/dashboard']).then(navegado => {
+              if (!navegado) {
+                console.error('La redirección falló. Verifica si el Guard está bloqueando la ruta.');
+              }
+            });
+
+          }
         },
         error: (err: HttpErrorResponse) => {
           // Verificamos si el error viene del backend con formato JSON
@@ -86,13 +104,4 @@ export default class AuthSignUpComponent {
 
       });
   }
-
-  // onSubmit(): void {
-  //   console.log('--- DIAGNÓSTICO DEL FORMULARIO ---');
-  //   console.log('¿Formulario inválido?:', this.form.invalid);
-  //   console.log('Valor actual:', this.form.value);
-  //   console.log('Errores en correo:', this.form.get('correo')?.errors);
-  //   console.log('¿Correo touched?:', this.form.get('correo')?.touched);
-  // }
-
 }

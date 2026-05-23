@@ -28,4 +28,5 @@ public class UserDto {
     private String telefonoUno;
     private String telefonoDos;
     private Long idRol;
+    private String codeRole;
 }

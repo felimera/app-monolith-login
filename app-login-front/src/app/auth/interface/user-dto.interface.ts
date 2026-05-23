@@ -8,4 +8,5 @@ export interface UserDto {
   telefonoUno: string;
   telefonoDos: string;
   idRol: number;
+  codeRole:string;
 }

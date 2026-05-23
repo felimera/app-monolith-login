@@ -82,8 +82,11 @@ public class IUserServiceImpl implements IUserService {
             User entity = IUserMapper.INSTANCE.toEntity(userDto);
             String passwordCifrada = passwordEncoder.encode(userDto.getContrasena());
             entity.setPassword(passwordCifrada);
-            entity.setRol(iRolService.getTypeRol(Constants.CODE_ROL_CLIENT));
-            return IUserMapper.INSTANCE.toDto(iUserRepository.save(entity));
+            Rol rol = iRolService.getTypeRol(Constants.CODE_ROL_CLIENT);
+            entity.setRol(rol);
+            UserDto dtoNew = IUserMapper.INSTANCE.toDto(iUserRepository.save(entity));
+            dtoNew.setCodeRole(rol.getCode());
+            return dtoNew;
         }
     }
 
