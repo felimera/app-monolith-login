@@ -23,8 +23,8 @@ import java.util.Objects;
 @CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
-    private JwtService jwtService;
-    private IAuthService iAuthService;
+    JwtService jwtService;
+    IAuthService iAuthService;
 
     @Autowired
     public LoginController(JwtService jwtService, IAuthService iAuthService) {
