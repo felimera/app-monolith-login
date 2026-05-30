@@ -5,6 +5,7 @@ import com.project.app_login_back.application.dto.auth.LoginResponse;
 import com.project.app_login_back.application.dto.auth.TokenRequest;
 import com.project.app_login_back.application.service.jwt.JwtService;
 import com.project.app_login_back.domain.service.IAuthService;
+import com.project.app_login_back.insfraestructure.util.MessageUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,9 @@ import java.util.Objects;
 @CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
+    public static final String CONFIG_MESSAGE = "config.message";
+    public static final String CONFIG_MESSAGE_CREDENTIALS_USERPASS = "config.message.credentials.userpass";
+    public static final String CONFIG_TOKEN = "config.token";
     JwtService jwtService;
     IAuthService iAuthService;
 
@@ -34,8 +38,18 @@ public class LoginController {
 
     @PostMapping(path = "/token")
     public ResponseEntity<Object> loginApi(@Valid @RequestBody TokenRequest tokenRequest) {
-        String token = jwtService.crearTokenUsername(tokenRequest.getUsername());
-        return ResponseEntity.ok(Map.of("token", token));
+        LoginRequest login = new LoginRequest(tokenRequest.getUsername(), tokenRequest.getPassword());
+        boolean isVerificado = iAuthService.getUserPassword(login);
+        if (isVerificado) {
+            String token = jwtService.crearTokenUsername(tokenRequest.getUsername());
+            String mensajeToken = MessageUtils.getMessage(CONFIG_TOKEN);
+            return ResponseEntity.ok(Map.of(mensajeToken, token));
+        } else {
+            String mensaje = MessageUtils.getMessage(CONFIG_MESSAGE);
+            String mensajeCredencialUserPass = MessageUtils.getMessage(CONFIG_MESSAGE_CREDENTIALS_USERPASS);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(mensaje, mensajeCredencialUserPass));
+        }
     }
 
     @PostMapping(path = "/in")
@@ -45,12 +59,18 @@ public class LoginController {
             LoginResponse loginResponse = jwtService.login(login);
             // Ejemplo rápido en el Controller
             if (Objects.isNull(loginResponse)) {
+                String mensaje = MessageUtils.getMessage(CONFIG_MESSAGE);
+                String mensajeCredencialUserPass = MessageUtils.getMessage(CONFIG_MESSAGE_CREDENTIALS_USERPASS);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "Incorrect username or password"));
+                        .body(Map.of(mensaje, mensajeCredencialUserPass));
             } else {
                 return ResponseEntity.ok(loginResponse);
             }
-        } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", "Incorrect username or password"));
+        } else {
+            String mensaje = MessageUtils.getMessage(CONFIG_MESSAGE);
+            String mensajeCredencialUserPass = MessageUtils.getMessage(CONFIG_MESSAGE_CREDENTIALS_USERPASS);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(mensaje, mensajeCredencialUserPass));
+        }
     }
 }
