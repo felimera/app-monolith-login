@@ -7,18 +7,21 @@ import com.project.app_login_back.application.dto.auth.TokenRequest;
 import com.project.app_login_back.application.service.jwt.JwtFilter;
 import com.project.app_login_back.application.service.jwt.JwtService;
 import com.project.app_login_back.domain.service.IAuthService;
+import com.project.app_login_back.insfraestructure.util.MessageUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Map;
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LoginController.class)
-@AutoConfigureMockMvc(addFilters = false) // Mantenemos apagados los filtros de seguridad del test
+@AutoConfigureMockMvc(addFilters = false)
 class LoginControllerTest {
 
     @Autowired
@@ -42,13 +45,42 @@ class LoginControllerTest {
     @MockitoBean
     private IAuthService iAuthService;
 
-    // 🚀 NUEVO MOCK 1: Satisface la dependencia que te está pidiendo el error en consola
     @MockitoBean
     private UserDetailsService userDetailsService;
 
-    // 🚀 NUEVO MOCK 2: Evita que el filtro real intente ejecutarse e interceptar la petición
     @MockitoBean
     private JwtFilter jwtFilter;
+    @MockitoBean
+    private MessageSource messageSource;
+
+    @BeforeEach
+    void setUp() {
+        MessageUtils.initialize(messageSource);
+
+        // Creamos un comportamiento inteligente para el Mock
+        Mockito.when(messageSource.getMessage(anyString(), any(), any(Locale.class)))
+                .thenAnswer(invocation -> {
+                    String key = invocation.getArgument(0); // Obtenemos la llave solicitada
+
+                    // Si piden la propiedad del token, devolvemos el nombre correcto del campo JSON
+                    if ("config.token".equals(key)) {
+                        return "token";
+                    }
+
+                    // Para cualquier otra cosa (mensajes de error, etc.), devolvemos la llave misma
+                    return key;
+                });
+
+        // Hacemos exactamente lo mismo para la variante del método con texto por defecto
+        Mockito.when(messageSource.getMessage(anyString(), any(), anyString(), any(Locale.class)))
+                .thenAnswer(invocation -> {
+                    String key = invocation.getArgument(0);
+                    if ("config.token".equals(key)) {
+                        return "token";
+                    }
+                    return key;
+                });
+    }
 
     @Test
     @DisplayName("🔑 Login Exitoso - Debería retornar Token y datos con credenciales válidas")
@@ -64,7 +96,6 @@ class LoginControllerTest {
         mockResponse.setFullName("test test");
         mockResponse.setCodeRole("DIRECT");
 
-        // Tus mockitos programados
         Mockito.when(iAuthService.getUserPassword(any(LoginRequest.class))).thenReturn(Boolean.TRUE);
         Mockito.when(jwtService.login(any(LoginRequest.class))).thenReturn(mockResponse);
 
@@ -84,11 +115,11 @@ class LoginControllerTest {
         // GIVEN
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setUsername("test");
+        tokenRequest.setPassword("1234");
 
         String token = "eyJhbGciOiJIUzI1Ni...";
-        Map.of("token", token);
 
-        // Tus mockitos programados
+        Mockito.when(iAuthService.getUserPassword(any(LoginRequest.class))).thenReturn(Boolean.TRUE);
         Mockito.when(jwtService.crearTokenUsername(anyString())).thenReturn(token);
 
         // WHEN / THEN
@@ -100,18 +131,15 @@ class LoginControllerTest {
     }
 
     @Test
-    @DisplayName("❌ Login Fallido - Debería lanzar error 400 cuando el formato del email es inválido")
+    @DisplayName("❌ Login Fallido - Debería lanzar error 401 cuando el formato del email es inválido")
     void login_DeberiaLanzarBadRequest_CuandoEmailEsInvalido() throws Exception {
         // GIVEN
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setIdentifier("test");
         loginRequest.setPassword("password123");
 
-        LoginResponse mockResponse = null;
-
-        // Tus mockitos programados
         Mockito.when(iAuthService.getUserPassword(any(LoginRequest.class))).thenReturn(Boolean.TRUE);
-        Mockito.when(jwtService.login(any(LoginRequest.class))).thenReturn(mockResponse);
+        Mockito.when(jwtService.login(any(LoginRequest.class))).thenReturn(null);
 
         // WHEN / THEN
         mockMvc.perform(post("/api/v1/login/in")
@@ -121,14 +149,13 @@ class LoginControllerTest {
     }
 
     @Test
-    @DisplayName("❌ Login Fallido - Debería lanzar error 400 cuando el password es incorrecto.")
+    @DisplayName("❌ Login Fallido - Debería lanzar error 401 cuando el password es incorrecto.")
     void login_DeberiaLanzarUnauthorized_CuandoPasswordIncorrecto() throws Exception {
         // GIVEN
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setIdentifier("test");
         loginRequest.setPassword("password123");
 
-        // Tus mockitos programados
         Mockito.when(iAuthService.getUserPassword(any(LoginRequest.class))).thenReturn(Boolean.FALSE);
 
         // WHEN / THEN

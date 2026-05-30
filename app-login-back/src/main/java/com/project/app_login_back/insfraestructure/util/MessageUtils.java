@@ -19,7 +19,7 @@ public final class MessageUtils {
     }
 
     // 2. Método interno para que el puente le pase el MessageSource de Spring
-    static void initialize(MessageSource messageSource) {
+    public static void initialize(MessageSource messageSource) {
         MessageUtils.instance = messageSource;
     }
 
