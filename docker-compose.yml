@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------------------
+  # SERVICIO 1: Base de Datos PostgreSQL
+  # ----------------------------------------------------
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: login-postgres-container
+    environment:
+      POSTGRES_DB: db_login
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5434:5432" # Mapea el puerto 5434 de tu PC al 5432 interno (evita choques si ya tienes un Postgres local)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Mantiene tus datos guardados aunque apagues el contenedor
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - login-network
+
+  # ----------------------------------------------------
+  # SERVICIO 2: Tu aplicación Monolítica (Spring + Angular)
+  # ----------------------------------------------------
+  monolith-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: login-monolith-container
+    ports:
+      - "8080:8080" # Expone el puerto 8080 para tu navegador
+    environment:
+      - DB_HOST=postgres-db # Nombre del servicio de arriba, Docker resolverá la IP automáticamente
+      - DB_PORT=5432
+      - DB_NAME=db_login
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+    depends_on:
+      - postgres-db # Obliga a Spring Boot a esperar que la base de datos encienda primero
+    networks:
+      - login-network
+
+# Definición de Recursos Compartidos
+volumes:
+  postgres_data: # Volumen persistente para la base de datos
+
+networks:
+  login-network: # Red interna para que los contenedores se hablen entre sí
+    driver: bridge

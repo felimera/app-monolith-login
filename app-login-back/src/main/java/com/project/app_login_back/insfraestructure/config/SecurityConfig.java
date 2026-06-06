@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/v1/login/**", "/api/v1/signup/in").permitAll()
+                        .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/*.ico", "/assets/**").permitAll()
 
                         // Rutas protegidas
                         .requestMatchers("/api/v1/rol/**", "/api/v1/user/in").hasAuthority("ROLE_ADMIN")
