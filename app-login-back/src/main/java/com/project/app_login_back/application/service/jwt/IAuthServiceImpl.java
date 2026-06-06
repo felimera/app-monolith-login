@@ -4,6 +4,7 @@ import com.project.app_login_back.application.dto.auth.LoginRequest;
 import com.project.app_login_back.domain.models.entity.User;
 import com.project.app_login_back.domain.repository.IUserCriteriaRepository;
 import com.project.app_login_back.domain.service.IAuthService;
+import com.project.app_login_back.insfraestructure.util.MessageUtils;
 import com.project.app_login_back.insfraestructure.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,11 +33,12 @@ public class IAuthServiceImpl implements IAuthService {
         map.put(key, loginRequest.getIdentifier());
         map.put("pass", loginRequest.getPassword());
 
+        String mensajeTraducido = MessageUtils.getMessage("config.message.credentials.userpass");
         User user = iUserCriteriaRepository.getConsultUserDifferentCriteria(map)
-                .orElseThrow(() -> new BadCredentialsException("Usuario o contraseña incorrectos"));
+                .orElseThrow(() -> new BadCredentialsException(mensajeTraducido));
 
         if (!passwordEncoder.matches(map.get("pass"), user.getPassword())) {
-            throw new BadCredentialsException("Usuario o contraseña incorrectos");
+            throw new BadCredentialsException(mensajeTraducido);
         }
 
         return true;

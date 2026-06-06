@@ -20,6 +20,7 @@ public interface IUserMapper {
     @Mapping(target = "telefonoUno", source = "phoneOne")
     @Mapping(target = "telefonoDos", source = "phoneTwo")
     @Mapping(target = "idRol", source = "rol.id")
+    @Mapping(target = "codeRole", ignore = true)
     @Mapping(target = "contrasena", ignore = true)
     UserDto toDto(User entity);
 
