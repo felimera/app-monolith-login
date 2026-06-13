@@ -1,0 +1,67 @@
+<div class="w-full max-w-md p-8 space-y-6 bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl">
+  <div class="text-center">
+    <h2 class="text-3xl font-extrabold text-white">Inicia sesión</h2>
+    <p class="mt-2 text-sm text-slate-400">Ingresa los datos para iniciar tu cuenta</p>
+  </div>
+
+  <form class="max-w-md mx-auto" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="identifier" class="block mb-2 text-sm font-medium text-slate-300 dark:text-white">
+        Usuario o Correo electrónico
+      </label>
+
+      <input type="text" id="identifier" formControlName="identifier"
+        class="bg-gray-50 border text-sm rounded-lg block w-full p-2.5"
+        [class.border-red-500]="form.get('identifier')?.invalid && form.get('identifier')?.touched"
+        [class.focus:ring-red-500]="form.get('identifier')?.invalid && form.get('identifier')?.touched"
+        [class.border-gray-300]="!(form.get('identifier')?.invalid && form.get('identifier')?.touched)"
+        placeholder="nombre_usuario o correo@empresa.com" />
+
+      <!-- Nueva sintaxis @if de Angular 17 -->
+      @if (form.get('identifier')?.touched && form.get('identifier')?.invalid) {
+      <div class="mt-1 flex flex-col">
+        @if (form.get('identifier')?.hasError('required')) {
+        <small class="text-red-500">Este campo es obligatorio.</small>
+        }
+        @if (form.get('identifier')?.hasError('email')) {
+        <small class="text-red-500">El formato de correo no es válido.</small>
+        }
+      </div>
+      }
+    </div>
+
+      <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-slate-300 dark:text-white">Contraseña</label>
+        <input type="password" name="password" id="password" placeholder="••••••••"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          required formControlName="password" />
+
+        <!-- NUEVO FLUJO DE CONTROL CON @if -->
+        @if (form.get('password')?.invalid && (form.get('password')?.dirty || form.get('password')?.touched)) {
+        <div class="mt-2 text-xs text-red-500 font-medium">
+          @if (form.get('password')?.hasError('required')) {
+          <span>La contraseña es obligatoria para iniciar sesión.</span>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="my-[20px]">
+        <button type="submit" [disabled]="form.invalid"
+          class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed">
+          Iniciar sesión
+        </button>
+      </div>
+
+
+
+      <div>
+        <p class="block mb-2 text-sm font-medium text-slate-300   dark:text-white">Si por alguna razón <a href="#"
+            class="ms-auto text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+            Perdiste tu contraseña?
+          </a>
+        </p>
+      </div>
+
+  </form>
+</div>

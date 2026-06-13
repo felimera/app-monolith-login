@@ -1,0 +1,48 @@
+<!-- Contenedor principal -->
+<div class="flex items-center justify-center p-4 md:p-6 w-full min-h-screen">
+
+  <!-- Tarjeta: h-auto en móvil para que crezca con el contenido, h-[650px] en PC -->
+  <div class="relative w-full max-w-6xl min-h-[550px] md:h-[650px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
+
+    <!-- LADO: Login -->
+    <!-- w-full en móvil, w-1/2 en PC -->
+    <div class="absolute inset-0 md:w-1/2 transition-all duration-700 ease-in-out z-20"
+         [ngClass]="isLogin ? 'translate-x-0 opacity-100' : 'translate-x-[-100%] md:translate-x-[-10%] opacity-0 pointer-events-none'">
+      <div class="p-6 md:p-16 flex flex-col justify-center h-full">
+        <app-auth-log-in></app-auth-log-in>
+        <!-- Botón extra solo para móvil para cambiar de vista -->
+        <button (click)="toggleView()" class="md:hidden mt-6 text-blue-400 text-sm font-medium underline">
+          ¿No tienes cuenta? Regístrate aquí
+        </button>
+      </div>
+    </div>
+
+    <!-- LADO: Registro -->
+    <!-- w-full en móvil, w-1/2 en PC -->
+    <div class="absolute inset-0 md:left-1/2 md:w-1/2 transition-all duration-700 ease-in-out z-20"
+         [ngClass]="!isLogin ? 'translate-x-0 opacity-100' : 'translate-x-[100%] md:translate-x-[10%] opacity-0 pointer-events-none'">
+      <div class="p-6 md:p-16 flex flex-col justify-center h-full">
+        <app-auth-sign-up></app-auth-sign-up>
+        <!-- Botón extra solo para móvil para cambiar de vista -->
+        <button (click)="toggleView()" class="md:hidden mt-6 text-blue-400 text-sm font-medium underline">
+          ¿Ya tienes cuenta? Inicia sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- PANEL DE TRANSICIÓN (OVERLAY): Solo visible en Desktop (md:flex) -->
+    <div class="hidden md:flex absolute inset-y-0 w-1/2 bg-gradient-to-br from-blue-900/90 to-[#0f172a] backdrop-blur-md transition-all duration-700 ease-in-out z-30 border-x border-white/10 shadow-2xl"
+         [ngClass]="isLogin ? 'left-1/2 rounded-l-[100px]' : 'left-0 rounded-r-[100px]'">
+
+      <div class="flex flex-col items-center justify-center text-white p-12 text-center w-full">
+        <h2 class="text-3xl font-bold mb-4">{{ isLogin ? '¿Nuevo por aquí?' : '¿Ya eres miembro?' }}</h2>
+        <p class="mb-8 text-slate-300">{{ isLogin ? 'Regístrate y comienza ya.' : 'Inicia sesión para continuar.' }}</p>
+        <button (click)="toggleView()"
+                class="px-10 py-3 border-2 border-white/50 rounded-full hover:bg-white hover:text-[#0f172a] transition-all font-bold">
+          {{ isLogin ? 'IR A REGISTRO' : 'IR A LOGIN' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
